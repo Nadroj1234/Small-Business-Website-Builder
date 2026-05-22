@@ -1,18 +1,20 @@
-import { db } from "./config";
-
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "../firebase/db";
 
-export async function saveWebsite(siteData) {
+export async function saveWebsite(data) {
   try {
+    console.log("Saving to Firestore...", data);
+
     const docRef = await addDoc(collection(db, "websites"), {
-      ...siteData,
+      ...data,
       createdAt: serverTimestamp(),
     });
 
     console.log("Saved with ID:", docRef.id);
-
+    console.log("DB object:", db);
     return docRef.id;
-  } catch (error) {
-    console.error("Error saving website:", error);
+  } catch (err) {
+    console.error("Firestore save failed:", err);
+    throw err;
   }
 }

@@ -1,20 +1,17 @@
-import { db } from "./config";
-
+import { db } from "./db";
 import { doc, getDoc } from "firebase/firestore";
 
 export async function loadWebsite(id) {
   try {
-    const docRef = doc(db, "websites", id);
+    const ref = doc(db, "websites", id);
+    const snap = await getDoc(ref);
 
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      return docSnap.data();
-    } else {
-      console.log("No document found");
-      return null;
+    if (snap.exists()) {
+      return snap.data();
     }
-  } catch (error) {
-    console.error("Error loading website:", error);
+
+    return null;
+  } catch (err) {
+    console.error("Load error:", err);
   }
 }
