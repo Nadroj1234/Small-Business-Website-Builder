@@ -1,10 +1,16 @@
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
-import { db } from "./firebase/db";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { auth, db } from "./firebase/db";
 
 export async function getTemplates() {
+  const user = auth.currentUser;
+
+  if (!user) {
+    return [];
+  }
+
   const templatesQuery = query(
     collection(db, "templates"),
-    orderBy("createdAt", "desc"),
+    where("ownerUid", "==", user.uid),
   );
   const snapshot = await getDocs(templatesQuery);
 
@@ -19,5 +25,10 @@ export async function getTemplates() {
         typeof template.siteData === "object" &&
         typeof template.siteData.businessName === "string"
       );
+    })
+    .sort((a, b) => {
+      const aMillis = a.createdAt?.toMillis?.() ?? 0;
+      const bMillis = b.createdAt?.toMillis?.() ?? 0;
+      return bMillis - aMillis;
     });
 }

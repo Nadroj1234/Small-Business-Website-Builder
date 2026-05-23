@@ -1,12 +1,23 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../auth/useAuth";
+import { usePlan } from "../plans/usePlan";
 import { getTemplates } from "../getTemplates";
 
 export default function TemplateLoader({ onOpen }) {
+  const { user, authLoading, signInWithGoogle } = useAuth();
+  const { currentPlan } = usePlan();
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   async function loadTemplates() {
+    if (!user) {
+      setTemplates([]);
+      setError("");
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError("");
@@ -21,9 +32,22 @@ export default function TemplateLoader({ onOpen }) {
   }
 
   useEffect(() => {
+    if (authLoading) {
+      return undefined;
+    }
+
     let cancelled = false;
 
     async function loadOnMount() {
+      if (!user) {
+        if (!cancelled) {
+          setTemplates([]);
+          setError("");
+          setLoading(false);
+        }
+        return;
+      }
+
       try {
         const data = await getTemplates();
 
@@ -49,7 +73,7 @@ export default function TemplateLoader({ onOpen }) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [authLoading, user]);
 
   return (
     <div style={{ padding: "2rem" }}>
@@ -64,27 +88,59 @@ export default function TemplateLoader({ onOpen }) {
       >
         <h2>Saved Templates</h2>
 
-        <button
-          onClick={loadTemplates}
-          style={{
-            padding: "0.6rem 1rem",
-            borderRadius: "8px",
-            border: "1px solid #d1d5db",
-            background: "white",
-            cursor: "pointer",
-          }}
-        >
-          Refresh
-        </button>
+        {user && (
+          <button
+            onClick={loadTemplates}
+            style={{
+              padding: "0.6rem 1rem",
+              borderRadius: "8px",
+              border: "1px solid #d1d5db",
+              background: "white",
+              cursor: "pointer",
+            }}
+          >
+            Refresh
+          </button>
+        )}
       </div>
+
+      <p style={{ color: "#64748b", marginBottom: "1rem" }}>
+        Plan preview: {currentPlan.name}
+        {currentPlan.limits.templates === Infinity
+          ? " includes unlimited templates."
+          : ` includes up to ${currentPlan.limits.templates} saved templates.`}
+      </p>
+
+      {authLoading && <p>Checking your login...</p>}
+      {!authLoading && !user && (
+        <>
+          <p>Sign in with Google to see the templates saved to your account.</p>
+          <button
+            type="button"
+            onClick={signInWithGoogle}
+            style={{
+              marginTop: "1rem",
+              padding: "0.75rem 1.25rem",
+              background: "#4f46e5",
+              color: "white",
+              border: "none",
+              borderRadius: "8px",
+              cursor: "pointer",
+            }}
+          >
+            Sign In with Google
+          </button>
+        </>
+      )}
 
       {loading && <p>Loading templates...</p>}
       {!loading && error && <p>{error}</p>}
-      {!loading && !error && templates.length === 0 && (
+      {!loading && !error && user && templates.length === 0 && (
         <p>No templates saved yet.</p>
       )}
 
-      {templates.map((template) => (
+      {user &&
+        templates.map((template) => (
         <div
           key={template.id}
           onClick={() => onOpen(template)}
@@ -107,7 +163,7 @@ export default function TemplateLoader({ onOpen }) {
               "Click to open in builder"}
           </p>
         </div>
-      ))}
+        ))}
     </div>
   );
 }

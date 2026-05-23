@@ -39,6 +39,7 @@
 .navbar-buttons {
   display: flex;
   gap: 1rem;
+  align-items: center;
 }
 
 .login-btn {
@@ -71,4 +72,12 @@
 .start-btn:hover {
   background: #4338ca;
   transform: translateY(-2px);
+}
+
+.user-chip {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.95rem;
 }

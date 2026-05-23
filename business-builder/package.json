@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:static": "vite build && node scripts/exportPublishedSites.mjs",
+    "deploy:hosting": "npm run build:static && C:\\Users\\jorda\\AppData\\Roaming\\npm\\firebase.cmd deploy --only hosting",
     "lint": "eslint .",
     "preview": "vite preview"
   },
