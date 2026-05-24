@@ -4,10 +4,12 @@ import { useAuth } from "../auth/useAuth";
 import { usePlan } from "../plans/usePlan";
 import { getTemplates } from "../getTemplates";
 import AboutSection from "../components/AboutSection";
+import AnnouncementBar from "../components/AnnouncementBar";
 import ContactSection from "../components/ContactSection";
 import HeroSection from "../components/HeroSection";
 import SidebarEditor from "../components/SidebarEditor";
 import ServicesSection from "../components/ServicesSection";
+import TestimonialSection from "../components/TestimonialSection";
 import { publishWebsite } from "../services/publishWebsite";
 import { saveTemplate } from "../services/saveTemplate";
 import { saveWebsite } from "../services/saveWebsite";
@@ -27,6 +29,10 @@ const defaultSiteData = {
   serviceOne: "Takeout and curbside pickup",
   serviceTwo: "Catering for offices and events",
   serviceThree: "Weekly family dinner specials",
+  announcementText: "Now booking larger catering orders for summer events.",
+  testimonialQuote:
+    "They helped us go from word-of-mouth only to a site that actually converts visitors into customers.",
+  testimonialAuthor: "Maria S., Local Business Owner",
   phone: "(555) 123-4567",
   email: "hello@joespizza.com",
   address: "123 Main Street\nBrooklyn, NY 11201",
@@ -169,9 +175,11 @@ export default function Builder() {
             <div>
               <strong>Previewing {currentPlan.name}</strong>
               <p style={{ marginTop: "0.35rem", color: "#475569" }}>
-                {currentPlan.features.advancedBuilder
-                  ? "Advanced builder tools are unlocked in this plan preview."
-                  : "This preview locks advanced fields, extra sections, and keeps JAK branding visible."}
+                {currentPlan.features.businessExtras
+                  ? "Business-only extras are unlocked in this plan preview."
+                  : currentPlan.features.servicesSection
+                    ? "Core business-site sections are unlocked in this plan preview."
+                    : "This preview keeps extra sections and premium controls locked."}
               </p>
             </div>
             <button
@@ -236,12 +244,22 @@ export default function Builder() {
           </button>
         </div>
 
+        {currentPlan.features.businessExtras && (
+          <AnnouncementBar siteData={siteData} />
+        )}
         <HeroSection siteData={siteData} />
         <AboutSection siteData={siteData} />
-        {currentPlan.features.advancedSections ? (
+        {currentPlan.features.servicesSection || currentPlan.features.contactSection ? (
           <>
-            <ServicesSection siteData={siteData} />
-            <ContactSection siteData={siteData} />
+            {currentPlan.features.servicesSection && (
+              <ServicesSection siteData={siteData} />
+            )}
+            {currentPlan.features.contactSection && (
+              <ContactSection siteData={siteData} />
+            )}
+            {currentPlan.features.businessExtras && (
+              <TestimonialSection siteData={siteData} />
+            )}
           </>
         ) : (
           <section
@@ -258,6 +276,7 @@ export default function Builder() {
             <p style={{ color: "#475569", lineHeight: 1.8 }}>
               The Free preview includes a simple landing page. Services,
               contact, and richer brand controls unlock on Pro and Business.
+              Business also adds announcement and testimonial sections.
             </p>
           </section>
         )}

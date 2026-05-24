@@ -3,7 +3,8 @@ import { useAuth } from "../auth/useAuth";
 import "./Navbar.css";
 
 export default function Navbar() {
-  const { user, authLoading, signInWithGoogle, signOutUser } = useAuth();
+  const { user, authLoading, signInWithGoogle, signOutUser, isApprovedUser, isAdminUser } =
+    useAuth();
 
   return (
     <nav className="navbar">
@@ -13,17 +14,18 @@ export default function Navbar() {
 
       <div className="navbar-links">
         <Link to="/">Home</Link>
-        <Link to="/builder">Builder</Link>
-        <Link to="/websites">Websites</Link>
-        <Link to="/pricing">Pricing</Link>
-        <Link to="/templates">Templates</Link>
+        {user && isApprovedUser && (
+          <>
+            <Link to="/builder">Builder</Link>
+            <Link to="/websites">Websites</Link>
+            <Link to="/pricing">Pricing</Link>
+            <Link to="/templates">Templates</Link>
+          </>
+        )}
+        {user && isAdminUser && <Link to="/approvals">Approvals</Link>}
       </div>
 
       <div className="navbar-buttons">
-        <Link to="/websites" className="login-btn">
-          My Websites
-        </Link>
-
         {authLoading ? (
           <span className="user-chip">Checking login...</span>
         ) : user ? (

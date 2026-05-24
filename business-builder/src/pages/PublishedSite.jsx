@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getPlanById } from "../plans/plans";
 import AboutSection from "../components/AboutSection";
+import AnnouncementBar from "../components/AnnouncementBar";
 import ContactSection from "../components/ContactSection";
 import HeroSection from "../components/HeroSection";
 import ServicesSection from "../components/ServicesSection";
+import TestimonialSection from "../components/TestimonialSection";
 import { loadPublishedWebsiteBySlug } from "../firebase/loadWebsite";
 
 export default function PublishedSite() {
@@ -56,12 +58,20 @@ export default function PublishedSite() {
       }}
     >
       <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
+        {plan.features.businessExtras && <AnnouncementBar siteData={siteData} />}
         <HeroSection siteData={siteData} />
         <AboutSection siteData={siteData} />
-        {plan.features.advancedSections && (
+        {(plan.features.servicesSection || plan.features.contactSection) && (
           <>
-            <ServicesSection siteData={siteData} />
-            <ContactSection siteData={siteData} />
+            {plan.features.servicesSection && (
+              <ServicesSection siteData={siteData} />
+            )}
+            {plan.features.contactSection && (
+              <ContactSection siteData={siteData} />
+            )}
+            {plan.features.businessExtras && (
+              <TestimonialSection siteData={siteData} />
+            )}
           </>
         )}
 

@@ -82,7 +82,10 @@ function EditorSection({
 }
 
 export default function SidebarEditor({ siteData, setSiteData, currentPlan }) {
-  const advancedLocked = !currentPlan.features.advancedBuilder;
+  const servicesLocked = !currentPlan.features.servicesSection;
+  const contactLocked = !currentPlan.features.contactSection;
+  const colorsLocked = !currentPlan.features.advancedColors;
+  const businessExtrasLocked = !currentPlan.features.businessExtras;
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -134,8 +137,8 @@ export default function SidebarEditor({ siteData, setSiteData, currentPlan }) {
 
       <EditorSection
         title="Hero"
-        locked={advancedLocked}
-        lockMessage="Upgrade to Pro or Business to unlock the full hero editor."
+        locked={!currentPlan.features.heroEditor}
+        lockMessage="Upgrade to unlock the full hero editor."
       >
         <EditorField
           label="Hero Heading"
@@ -186,7 +189,7 @@ export default function SidebarEditor({ siteData, setSiteData, currentPlan }) {
 
       <EditorSection
         title="Services"
-        locked={advancedLocked}
+        locked={servicesLocked}
         lockMessage="Services are available on Pro and Business plans."
       >
         <EditorField
@@ -220,7 +223,7 @@ export default function SidebarEditor({ siteData, setSiteData, currentPlan }) {
 
       <EditorSection
         title="Contact"
-        locked={advancedLocked}
+        locked={contactLocked}
         lockMessage="Contact blocks are available on Pro and Business plans."
       >
         <EditorField
@@ -255,7 +258,7 @@ export default function SidebarEditor({ siteData, setSiteData, currentPlan }) {
 
       <EditorSection
         title="Colors"
-        locked={advancedLocked}
+        locked={colorsLocked}
         lockMessage="Advanced color controls unlock on Pro and Business."
       >
         <div style={gridStyle}>
@@ -288,6 +291,34 @@ export default function SidebarEditor({ siteData, setSiteData, currentPlan }) {
             type="color"
           />
         </div>
+      </EditorSection>
+
+      <EditorSection
+        title="Business Extras"
+        locked={businessExtrasLocked}
+        lockMessage="Announcement and testimonial sections are exclusive to Business."
+      >
+        <EditorField
+          label="Announcement Bar"
+          name="announcementText"
+          value={siteData.announcementText}
+          onChange={handleChange}
+        />
+        <div style={{ height: "0.75rem" }} />
+        <EditorField
+          label="Testimonial Quote"
+          name="testimonialQuote"
+          value={siteData.testimonialQuote}
+          onChange={handleChange}
+          as="textarea"
+        />
+        <div style={{ height: "0.75rem" }} />
+        <EditorField
+          label="Testimonial Author"
+          name="testimonialAuthor"
+          value={siteData.testimonialAuthor}
+          onChange={handleChange}
+        />
       </EditorSection>
     </aside>
   );

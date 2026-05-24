@@ -2,30 +2,55 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == "jordank06759@gmail.com";
+    }
+
     match /templates/{templateId} {
-      allow create: if request.auth != null
+      allow create: if isSignedIn()
         && request.resource.data.ownerUid == request.auth.uid;
-      allow read, update, delete: if request.auth != null
+      allow read, update, delete: if isSignedIn()
         && resource.data.ownerUid == request.auth.uid;
     }
 
     match /websites/{websiteId} {
-      allow create: if request.auth != null
+      allow create: if isSignedIn()
         && request.resource.data.ownerUid == request.auth.uid;
-      allow read, update, delete: if request.auth != null
+      allow read, update, delete: if isSignedIn()
         && resource.data.ownerUid == request.auth.uid;
     }
 
     match /publishedWebsites/{slug} {
       allow read: if true;
-      allow create, update: if request.auth != null
+      allow create, update: if isSignedIn()
         && request.resource.data.ownerUid == request.auth.uid;
-      allow delete: if request.auth != null
+      allow delete: if isSignedIn()
         && resource.data.ownerUid == request.auth.uid;
     }
 
-    match /{document=**} {
-      allow read, write: if request.time < timestamp.date(2026, 6, 20);
+    match /userProfiles/{userId} {
+      allow create: if isSignedIn()
+        && request.auth.uid == userId
+        && request.resource.data.uid == request.auth.uid
+        && (
+          (isAdmin() && request.resource.data.status == "approved")
+          || (!isAdmin() && request.resource.data.status == "pending")
+        );
+      allow read: if isAdmin() || (isSignedIn() && request.auth.uid == userId);
+      allow update: if isAdmin()
+        || (
+          isSignedIn()
+          && request.auth.uid == userId
+          && request.resource.data.uid == resource.data.uid
+          && request.resource.data.email == resource.data.email
+          && request.resource.data.status == resource.data.status
+        );
+      allow delete: if isAdmin();
     }
   }
 }

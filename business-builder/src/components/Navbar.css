@@ -11,17 +11,20 @@
   top: 0;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   z-index: 1000;
+  box-sizing: border-box;
 }
 
 .navbar-logo h2 {
-  font-size: 1.8rem;
+  font-size: 1.35rem;
   font-weight: 700;
   color: #4f46e5;
+  margin: 0;
+  line-height: 1.1;
 }
 
 .navbar-links {
   display: flex;
-  gap: 2rem;
+  gap: 1.35rem;
 }
 
 .navbar-links a {

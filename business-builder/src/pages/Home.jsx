@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
+import { useAuth } from "../auth/useAuth";
 
 export default function Home() {
+  const { user, isApprovedUser } = useAuth();
+
   return (
     <main
       style={{
@@ -63,78 +66,64 @@ export default function Home() {
             account.
           </p>
 
-          <div
-            style={{
-              display: "flex",
-              gap: "1rem",
-              flexWrap: "wrap",
-              marginTop: "2rem",
-            }}
-          >
-            <Link to="/builder">
-              <button
-                style={{
-                  padding: "0.95rem 1.4rem",
-                  borderRadius: "999px",
-                  border: "none",
-                  background: "white",
-                  color: "#1d4ed8",
-                  fontWeight: 700,
-                  cursor: "pointer",
-                }}
-              >
-                Start Building
-              </button>
-            </Link>
+          {user && isApprovedUser && (
+            <div
+              style={{
+                display: "flex",
+                gap: "1rem",
+                flexWrap: "wrap",
+                marginTop: "2rem",
+              }}
+            >
+              <Link to="/builder">
+                <button
+                  style={{
+                    padding: "0.95rem 1.4rem",
+                    borderRadius: "999px",
+                    border: "none",
+                    background: "white",
+                    color: "#1d4ed8",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                  }}
+                >
+                  Start Building
+                </button>
+              </Link>
 
-            <Link to="/templates">
-              <button
-                style={{
-                  padding: "0.95rem 1.4rem",
-                  borderRadius: "999px",
-                  border: "1px solid rgba(255, 255, 255, 0.4)",
-                  background: "transparent",
-                  color: "white",
-                  fontWeight: 700,
-                  cursor: "pointer",
-                }}
-              >
-                View Templates
-              </button>
-            </Link>
+              <Link to="/templates">
+                <button
+                  style={{
+                    padding: "0.95rem 1.4rem",
+                    borderRadius: "999px",
+                    border: "1px solid rgba(255, 255, 255, 0.4)",
+                    background: "transparent",
+                    color: "white",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                  }}
+                >
+                  View Templates
+                </button>
+              </Link>
 
-            <Link to="/websites">
-              <button
-                style={{
-                  padding: "0.95rem 1.4rem",
-                  borderRadius: "999px",
-                  border: "1px solid rgba(255, 255, 255, 0.24)",
-                  background: "rgba(255, 255, 255, 0.08)",
-                  color: "white",
-                  fontWeight: 700,
-                  cursor: "pointer",
-                }}
-              >
-                Manage Websites
-              </button>
-            </Link>
-
-            <Link to="/pricing">
-              <button
-                style={{
-                  padding: "0.95rem 1.4rem",
-                  borderRadius: "999px",
-                  border: "1px solid rgba(255, 255, 255, 0.24)",
-                  background: "rgba(255, 255, 255, 0.08)",
-                  color: "white",
-                  fontWeight: 700,
-                  cursor: "pointer",
-                }}
-              >
-                See Pricing
-              </button>
-            </Link>
-          </div>
+              <Link to="/pricing">
+                <button
+                  style={{
+                    padding: "0.95rem 1.4rem",
+                    borderRadius: "999px",
+                    border: "1px solid rgba(255, 255, 255, 0.24)",
+                    background: "rgba(255, 255, 255, 0.08)",
+                    color: "white",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                  }}
+                >
+                  See Pricing
+                </button>
+              </Link>
+            </div>
+          )}
         </div>
 
         <div

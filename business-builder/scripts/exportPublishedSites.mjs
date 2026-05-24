@@ -62,7 +62,9 @@ function renderButton(text, primaryColor, filled) {
 function renderPublishedHtml(website) {
   const siteData = website.siteData ?? {};
   const plan = getPlanById(website.planId);
-  const advancedSections = plan.features.advancedSections;
+  const servicesSection = plan.features.servicesSection;
+  const contactSection = plan.features.contactSection;
+  const businessExtras = plan.features.businessExtras;
   const removeBranding = plan.features.removeBranding;
 
   const services = [siteData.serviceOne, siteData.serviceTwo, siteData.serviceThree]
@@ -88,6 +90,19 @@ function renderPublishedHtml(website) {
       </div>
     </section>
   `;
+
+  const announcementHtml = businessExtras && siteData.announcementText
+    ? `<div style="margin-bottom:1rem;padding:0.9rem 1.2rem;border-radius:16px;background:#0f172a;color:white;text-align:center;font-weight:700;letter-spacing:0.01em;">${escapeHtml(siteData.announcementText)}</div>`
+    : "";
+
+  const testimonialHtml =
+    businessExtras && siteData.testimonialQuote
+      ? `<section style="margin-top:2rem;padding:2rem;border-radius:22px;background:linear-gradient(135deg, #fff7ed, white);text-align:left;box-shadow:0 18px 45px rgba(15, 23, 42, 0.06);">
+        <h2 style="margin:0 0 1rem;">Customer Spotlight</h2>
+        <p style="margin:0;font-size:1.2rem;line-height:1.8;color:#0f172a;font-style:italic;">&ldquo;${escapeHtml(siteData.testimonialQuote)}&rdquo;</p>
+        <p style="margin-top:1rem;color:#475569;font-weight:700;">${escapeHtml(siteData.testimonialAuthor)}</p>
+      </section>`
+      : "";
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -170,6 +185,7 @@ function renderPublishedHtml(website) {
   </head>
   <body>
     <main class="container">
+      ${announcementHtml}
       <section class="hero">
         <p class="tag">${escapeHtml(siteData.tagline)}</p>
         <h1>${escapeHtml(siteData.heroText)}</h1>
@@ -186,12 +202,15 @@ function renderPublishedHtml(website) {
       </section>
 
       ${
-        advancedSections
-          ? `<section class="services">
+        servicesSection || contactSection
+          ? `${servicesSection
+            ? `<section class="services">
         <h2>${escapeHtml(siteData.servicesTitle)}</h2>
         <div class="services-grid">${services}</div>
-      </section>
-      ${contactHtml}`
+      </section>`
+            : ""}
+      ${contactSection ? contactHtml : ""}
+      ${testimonialHtml}`
           : ""
       }
 
